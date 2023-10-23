@@ -1,0 +1,22 @@
+{% extends 'layouts/basic.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="form-container container">
+    <h1>{% block form_title %}Введите данные{% endblock form_title %}</h1>
+    <form method="post" class="login">
+        {% block csrf %}
+        {% csrf_token %}
+        {% endblock csrf %}
+        {% bootstrap_form form layout='horizontal' %}
+        <input type="hidden" name="next" value="{{ next }}">
+<!--        <div class="info">-->
+<!--            {{ form.as_p }}-->
+<!--        </div>-->
+        <div class="container">
+            {% block form_buttons %}
+            {% endblock form_buttons %}
+        </div>
+    </form>
+</div>
+{% endblock content %}

@@ -1,0 +1,20 @@
+{% extends 'layouts/basic.html' %}
+
+{% block title %}
+Профиль пользователя
+{% endblock title %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md">
+        <h2>Профиль пользователя {{ user.username }}</h2>
+        {% if user.first_name and user.last_name %}
+        <p>Здравствуйте, {{ user.first_name }} {{ user.last_name }}!</p>
+        {% else %}
+        <p>Здравствуйте, {{ user.username }}</p>
+        {% endif %}
+        <a href="{% url 'profile-change' %}">Изменить данные</a>
+        <h3>Ваши арендуемые ТС</h3>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'tmain/css/basic.css' %}">
+   <!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    {% block links %}
+    {% endblock links %}
+    <title>{% block title %}Главная{% endblock title %}</title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <nav class="container-fluid header">
+            <div class="row">
+                <div class="col-sm">
+                    <a class="a-nav" href="{% url 'main' %}">Главная</a>
+                </div>
+                <div class="col-sm">
+                    <a class="a-nav" href="{% url 'rent-strating' %}">Аренда ТС</a>
+                </div>
+                {% if user.is_authenticated %}
+                <div class="col-sm">
+                    <a class="a-nav" href="{% url 'logout' %}">Выйти</a>
+                </div>
+                <div class="col-sm">
+                    <a class="a-nav" href="{% url 'profile' %}">
+                        <img src="#">
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-sm">
+                    <a class="a-nav" href="{% url 'login' %}">Войти</a>
+                </div>
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+    <div class="row content">
+        {% block content %}
+        <p>Добро пожаловать! Выберите транспорт, который хотите арендовать.</p>
+        {% endblock content %}
+    </div>
+</div>
+</body>
+</html>

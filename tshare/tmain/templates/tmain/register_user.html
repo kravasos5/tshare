@@ -1,0 +1,21 @@
+{% extends 'layouts/form_basic.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+Регистрация
+{% endblock title %}
+
+{% block csrf %}
+{% csrf_token %}
+{% endblock csrf %}
+
+{% block form_buttons %}
+<div class="row">
+    <div class="col-sm">
+        <a href="{% url 'login' %}" class="form-a">Назад</a>
+    </div>
+    <div class="col-sm">
+        {% buttons submit='Зарегистрироваться' %}{% endbuttons %}
+    </div>
+</div>
+{% endblock form_buttons %}

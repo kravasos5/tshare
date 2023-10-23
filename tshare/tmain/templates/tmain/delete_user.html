@@ -1,0 +1,19 @@
+{% extends "layouts/basic.html" %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="col-md">
+    <h1>Введите данные</h1>
+    {% if messages %}
+    {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}{{ message }}{% endif %}
+    {% endfor %}
+    {% endif %}
+    <form method="post" class="login">
+        {% csrf_token %}
+        {% bootstrap_form form layout='horizontal' %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <input type="submit" value="Удалить" class="form-btn">
+    </form>
+</div>
+{% endblock %}

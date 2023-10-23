@@ -1,0 +1,4 @@
+Письмо подтверждения смены пароля
+Здравствуйте, {{ user.username }}!
+Для смены пароля перейдите по ссылке:
+{{ protocol}}://{{ domain }}{% url 'password-reset-confrim' uidb64=uid token=token %}

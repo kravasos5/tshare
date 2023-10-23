@@ -1,0 +1,20 @@
+{% extends 'layouts/form_basic.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+Вход
+{% endblock title %}
+
+{% block form_buttons %}
+<div class="row">
+    <div class="col-sm">
+        <a href="{% url 'password-reset' %}" class="form-a">Забыли пароль?</a>
+    </div>
+    <div class="col-sm">
+        <a class="form-btn-a" href="{% url 'register-user' %}">Регистрация</a>
+    </div>
+    <div class="col-sm">
+        {% buttons submit='Войти' %}{% endbuttons %}
+    </div>
+</div>
+{% endblock form_buttons %}

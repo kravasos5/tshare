@@ -1,0 +1,21 @@
+{% extends 'layouts/form_basic.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+Изменение данных
+{% endblock title %}
+
+{% block form_title %}
+Изменение данных пользователя {{ user.username }}
+{% endblock form_title %}
+
+{% block form_buttons %}
+<div class="row">
+    <div class="col-sm">
+        {% buttons submit='Изменить' %}{% endbuttons %}
+    </div>
+    <div class="col-sm">
+        <a class="form-btn-a" href="{% url 'profile-delete-starting' %}">Удалить аккаунт</a>
+    </div>
+</div>
+{% endblock form_buttons %}
