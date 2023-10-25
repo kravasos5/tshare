@@ -3,7 +3,8 @@ from .views import *
 
 urlpatterns = [
     path('', main, name='main'),
-    path('rent/starting/', rent_starting, name='rent-strating'),
+    path('rent/starting/', RentStartingView.as_view(), name='rent-strating'),
+    path('rent/<str:type>', RentView.as_view(), name='rent'),
 
     path('accounts/login/', LoginView.as_view(), name='login'),
     path('accounts/logout/', LogoutView.as_view(), name='logout'),
@@ -23,5 +24,8 @@ urlpatterns = [
 
     path('accounts/profile/change/', ChangeUserInfoView.as_view(), name='profile-change'),
 
-    path('accounts/profile/', profile, name='profile'),
+    path('accounts/profile/transport/create/', UserTransportCreateView.as_view(), name='create-transport'),
+    path('accounts/profile/transport/update/<int:pk>', UserTransportUpdateView.as_view(), name='update-transport'),
+    path('accounts/profile/transport/', UserTransportView.as_view(), name='profile-transport'),
+    path('accounts/profile/', Profile.as_view(), name='profile'),
 ]

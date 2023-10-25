@@ -1,9 +1,30 @@
 {% extends 'layouts/basic.html' %}
+{% load static %}
+{% load rent_tag %}
 
 {% block title %}
 Начало аренды
 {% endblock title %}
 
+{% block links %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script src="{% static 'tmain/js/basic.js' %}"></script>
+<script>
+    var csrf_token = '{{ csrf_token }}';
+</script>
+{% endblock links %}
+
 {% block content %}
-<p>Выберит тип транспорта:</p>
+<div class="row">
+    <div class="col-md">
+        <p>Выберите тип транспорта:</p>
+    </div>
+</div>
+<div class="row">
+    {% for type in transport_types %}
+    <div class="col-md">
+        <a class="btn btn-primary" href="{% url 'rent' type=type|short_transport_name %}">{{ type }}</a>
+    </div>
+    {% endfor %}
+</div>
 {% endblock content %}

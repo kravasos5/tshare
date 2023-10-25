@@ -1,0 +1,48 @@
+{% extends 'layouts/basic.html' %}
+{% load static %}
+
+{% block title %}
+Аренда
+{% endblock title %}
+
+{% block links %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script src="{% static 'tmain/js/basic.js' %}"></script>
+<script src="{% static 'tmain/js/rent.js' %}"></script>
+<script>
+    var csrf_token = '{{ csrf_token }}';
+</script>
+{% endblock links %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md">
+        <div class="container">
+        {% if ts_is_empty %}
+        <p>Здесь пока ничего нет...</p>
+        {% endif %}
+        {% for ts in transport %}
+            <div class="container rent-container p-5 {{ ts.id }}">
+                <div class="row">
+                    <h3>{{ ts.get_transport_type_display }} - {{ ts.model }}</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md">
+                        <p>Цвет: {{ ts.color }}</p>
+                        <p>Гос-номер: {{ ts.identifier }}</p>
+                        <p>Описание: {{ ts.description }}</p>
+                        <p>Координаты по широте: {{ ts.latitude }}</p>
+                        <p>Координаты по долготе: {{ ts.longitude }}</p>
+                        <p>Цена за час: {{ ts.hour_price }}</p>
+                        <p>Цена за день: {{ ts.day_price }}</p>
+                        <p>Владелец: {{ ts.owner }}</p>
+                        <p>Связь с владельцем: {{ ts.owner.email }}</p>
+                        <p class="btn btn-primary mb-1 btn-rent">Арендовать</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

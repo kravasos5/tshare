@@ -5,3 +5,15 @@
 .content {
     margin: 40px 0px 20px 0px;
 }
+
+p.p-nav {
+    color: #007bff;
+}
+
+.rent-container {
+    background-color: #EFEFEF;
+}
+
+a.btn-primary, p.btn-primary {
+    color: #fff !important;
+}

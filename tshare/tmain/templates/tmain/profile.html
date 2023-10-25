@@ -1,10 +1,30 @@
 {% extends 'layouts/basic.html' %}
+{% load static %}
 
 {% block title %}
 Профиль пользователя
 {% endblock title %}
 
+{% block links %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script src="{% static 'tmain/js/basic.js' %}"></script>
+<script src="{% static 'tmain/js/profile.js' %}"></script>
+<script>
+    var csrf_token = '{{ csrf_token }}';
+</script>
+{% endblock links %}
+
 {% block content %}
+{% if messages %}
+    {% for m in messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ m }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+{% endif %}
 <div class="row">
     <div class="col-md">
         <h2>Профиль пользователя {{ user.username }}</h2>
@@ -13,8 +33,40 @@
         {% else %}
         <p>Здравствуйте, {{ user.username }}</p>
         {% endif %}
-        <a href="{% url 'profile-change' %}">Изменить данные</a>
+        <p><a href="{% url 'profile-change' %}">Изменить данные</a></p>
+        <p><a href="{% url 'profile-transport' %}">Мои ТС</a></p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
         <h3>Ваши арендуемые ТС</h3>
+        <div class="container">
+            {% if rents_is_empty %}
+            <p>Здесь пока ничего нет...</p>
+            {% endif %}
+            {% for rent in rents %}
+                <div class="container rent-container p-5 {{ rent.id }}">
+                    <div class="row">
+                        <h3>{{ rent.transport.get_transport_type_display }} - {{ rent.transport.model }}</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <p>Время начала аренды: {{ rent.time_start }}</p>
+                            {% if rent.time_end != None %}
+                                <p>Время конеца аренды: {{ rent.time_end }}</p>
+                            {% endif %}
+                            <p>Общее время аренды. {{ rent.get_rental_duration }}</p>
+                            <p>Текущая цена аренды: {{ rent.get_rental_price }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <p class="btn btn-danger end-rent">Завершить аренду</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock content %}

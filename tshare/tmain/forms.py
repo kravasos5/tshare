@@ -4,7 +4,8 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 
 from .apps import user_registered
-from .models import User
+from .models import User, Transport
+
 
 class ChangeUserInfoForm(forms.ModelForm):
     '''Форма пользовательских данных'''
@@ -14,7 +15,8 @@ class ChangeUserInfoForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name',
-                  'send_messages')
+                  'send_messages', 'latitude', 'longitude',
+                  'radius', 'balance')
 
 class RegisterUserForm(forms.ModelForm):
     '''форма для регистрации пользователя'''
@@ -64,3 +66,11 @@ class DeleteUserForm(forms.Form):
                                 help_text=password_validation.password_validators_help_text_html())
     class Meta:
         fields = ('username', 'password')
+
+class UserTransportForm(forms.ModelForm):
+    '''Форма изменения/добавления ТС'''
+    class Meta:
+        model = Transport
+        fields = ('transport_type', 'model', 'color', 'identifier',
+                  'description', 'latitude', 'longitude',
+                  'hour_price', 'day_price', 'is_active')

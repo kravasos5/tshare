@@ -43,10 +43,13 @@ class NonactivatedFilter(admin.SimpleListFilter):
 
 class UserAdmin(admin.ModelAdmin):
     '''Редактор ползователя'''
-    list_display = ('__str__', 'is_activated', 'date_joined')
+    list_display = ('__str__', 'is_activated', 'date_joined', 'balance',
+                    'latitude', 'longitude', 'radius')
     search_fields = ('username', 'email', 'first_name', 'last_name')
     list_filter = [NonactivatedFilter]
     fields = (('username', 'email'), ('first_name', 'last_name'),
+              ('latitude', 'longitude', 'radius'),
+              'balance',
               ('send_messages', 'is_active', 'is_activated'),
               ('is_staff', 'is_superuser'),
               'groups', 'user_permissions',
@@ -55,4 +58,36 @@ class UserAdmin(admin.ModelAdmin):
     readonly_fields = ('last_login', 'date_joined')
     actions = (send_activation_notifications,)
 
+class TransportAdmin(admin.ModelAdmin):
+    '''Редактор транспорта'''
+    list_display = ('__str__', 'is_rented', 'is_active', 'transport_type', 'model',
+                    'color', 'identifier', 'description', 'latitude',
+                    'longitude', 'hour_price', 'day_price', 'owner')
+    search_fields = ('transport_type', 'identifier', 'owner', 'is_rented',
+                     'is_active')
+    fields = (
+        'is_rented', 'is_active',
+        ('transport_type', 'identifier'),
+        ('model', 'color', 'description'),
+        ('latitude', 'longitude'),
+        ('hour_price', 'day_price'),
+        'owner'
+    )
+    readonly_fields = ('is_rented',)
+
+class RentAdmin(admin.ModelAdmin):
+    '''Редактор аренды'''
+    list_display = ('user', 'transport', 'time_start', 'time_end',
+                    'is_active', 'price')
+    search_fields = ('user', 'transport', 'is_active',
+                     'time_start', 'time_end')
+    fields = (
+        'user', 'transport', 'is_active',
+        'time_end',
+        'price'
+    )
+    readonly_fields = ('time_start',)
+
 admin.site.register(User, UserAdmin)
+admin.site.register(Transport, TransportAdmin)
+admin.site.register(Rent, RentAdmin)

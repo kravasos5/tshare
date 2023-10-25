@@ -1,0 +1,79 @@
+{% extends 'layouts/basic.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block title %}
+Мои транспортные средства
+{% endblock title %}
+
+{% block links %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+<script src="{% static 'tmain/js/basic.js' %}"></script>
+<script src="{% static 'tmain/js/user_transport.js' %}"></script>
+<script>
+    var csrf_token = '{{ csrf_token }}';
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+{% endblock links %}
+
+{% block content %}
+{% if messages %}
+    {% for m in messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{ m }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<div class="modal fade" id="deletionModal" tabindex="-1" role="dialog" aria-labelledby="deletionModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Подтвердите действие</h5>
+            </div>
+            <div class="modal-body">
+                Вы точно хотите удалить это ТС ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal-close" data-dismiss="modal">Нет</button>
+                <button type="button" class="btn btn-danger" id="deletion-confirm">Да</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md">
+        <div class="container">
+         <a class="btn btn-primary" href="{% url 'create-transport' %}">Добавить</a>
+        {% if usert_ts_is_empty %}
+        <p>Здесь пока ничего нет...</p>
+        {% endif %}
+        {% for ts in transport %}
+            <div class="container rent-container p-5 {{ ts.id }}">
+                <div class="row">
+                    <h3>{{ ts.get_transport_type_display }} - {{ ts.model }}</h3>
+                </div>
+                <div class="row">
+                    <div class="col-md">
+                        <p>Цвет: {{ ts.color }}</p>
+                        <p>Гос-номер: {{ ts.identifier }}</p>
+                        <p>Описание: {{ ts.description }}</p>
+                        <p>Координаты по широте: {{ ts.latitude }}</p>
+                        <p>Координаты по долготе: {{ ts.longitude }}</p>
+                        <p>Цена за час: {{ ts.hour_price }}</p>
+                        <p>Цена за день: {{ ts.day_price }}</p>
+                        <p>Связь с владельцем: {{ ts.owner.email }}</p>
+                        <a class="btn btn-primary mb-1" href="{% url 'update-transport' pk=ts.id %}">Изменить</a>
+                        <button type="button" class="btn btn-danger btn-delete mb-1" data-toggle="modal" data-target="#deletionModal">Удалить</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
