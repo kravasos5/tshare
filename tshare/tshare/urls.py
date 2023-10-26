@@ -16,10 +16,31 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+
+from tmain.rest_api_views import *
+
+# router = DefaultRouter()
+# router.register('account', AccountAPIView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('tmain.urls'))
+    path('', include('tmain.urls')),
+    # rest api AccountController
+    path('api/account/signup/', AccountCreateAPIView.as_view(), name='account-register'),
+    path('api/account/signout/', AccountLogoutView.as_view(), name='account-signout'),
+    path('api/account/me/', AccountInfoAPIView.as_view(), name='account-me'),
+    path('api/account/update/', AccountUpdateAPIView.as_view(), name='account-update'),
+    path('api/account/token/signin/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
+    path('api/account/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+    path('api/account/token/verify/', TokenVerifyView.as_view(), name='token-verify'),
+    # rest api TransportController
+    path('api/transport/create/', TransportCreateAPIView.as_view(), name='transport-create'),
+    path('api/transport/<int:pk>/', TransportRUDAPIView.as_view(), name='transport'),
+
+
+    # path('api/', include(router.urls)),
 ]
 
 urlpatterns += [

@@ -103,7 +103,7 @@ class UserTransportCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateVie
     def post(self, request, *args, **kwargs):
         form = UserTransportForm(request.POST)
         if form.is_valid():
-            # Автоматически присвоит владельца ТС
+            # Назначение владельца ТС
             transport = form.save(commit=False)
             transport.owner = request.user
             transport.save()
