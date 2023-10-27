@@ -172,7 +172,7 @@ class Profile(LoginRequiredMixin, CsrfMixin, TemplateView):
             rent.transport.save()
             # нахожу пользователя и обновляю ему баланс
             user = rent.user
-            user.balance = user.balance - float(rent.get_rental_price())
+            user.balance = user.balance - float(rent.price)
             user.save()
             # обновляю аренду
             rent.save()

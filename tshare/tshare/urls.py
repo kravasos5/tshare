@@ -24,6 +24,7 @@ from tmain.rest_api_views import *
 # router = DefaultRouter()
 # router.register('account', AccountAPIView)
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('tmain.urls')),
@@ -38,11 +39,21 @@ urlpatterns = [
     # rest api TransportController
     path('api/transport/create/', TransportCreateAPIView.as_view(), name='transport-create'),
     path('api/transport/<int:pk>/', TransportRUDAPIView.as_view(), name='transport'),
-
+    # rest api RentController
+    path('api/rent/transporthistory/<int:pk>/', TransportRentHistoryAPIView.as_view(), name='transport-rent-history'),
+    path('api/rent/transport/<int:pk>/', RentedOrOwnTransportAPIView.as_view(), name='rented-transport'),
+    path('api/rent/end/<int:pk>/', EndRentAPIView.as_view(), name='end-rent'),
+    path('api/rent/new/<int:pk>/', NewRentAPIView.as_view(), name='new-rent'),
+    path('api/rent/transport/', RentAccessfulTransportAPIView.as_view(), name='accessful-transport'),
+    path('api/rent/myhistory/', UserRentHistoryAPIView.as_view(), name='my-rent-history'),
+    # rest api PaymentController
+    path('api/payment/hesoyam/<int:pk>/', PaymentAPIView.as_view(), name='hesoyam'),
+    # rest api AdminAccountController
+    path('api/admin/account/<int:pk>/', AdminUserRUDAPIView.as_view(), name='admin-account-rud'),
+    path('api/admin/account/', AdminAllUsersAPIView.as_view(), name='admin-account-listcreate'),
 
     # path('api/', include(router.urls)),
 ]
-
 urlpatterns += [
     path('captcha/', include('captcha.urls')),
 ]
