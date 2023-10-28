@@ -104,7 +104,7 @@ class NewRentSerializer(serializers.ModelSerializer):
 # AdminAccountSerializer
 
 class AdminUserCreateSerializer(serializers.ModelSerializer):
-    '''Сериализатор создания пользователя'''
+    '''Admin Сериализатор создания пользователя'''
     password = serializers.CharField(
         write_only=True,
         required=True,
