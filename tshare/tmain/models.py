@@ -55,7 +55,8 @@ class Transport(models.Model):
     model = models.CharField(max_length=100, verbose_name='Модель ТС')
     color = models.CharField(max_length=80, verbose_name='Цвет ТС')
     identifier = models.CharField(validators=(validate_identifier,),
-                                  verbose_name='Идентификатор ТС')
+                                  verbose_name='Идентификатор ТС',
+                                  unique=True)
     description = models.CharField(verbose_name='Описание ТС',
                                    max_length=500,
                                    help_text='Максимальная длина описания \

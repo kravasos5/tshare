@@ -88,7 +88,7 @@ class TransportSerializer(serializers.ModelSerializer):
 
 class RentReadSerializer(serializers.ModelSerializer):
     '''Среиализатор истории аренды'''
-    transport = TransportSerializer(source=None)
+    transport = TransportReadSerializer(source=None)
     class Meta:
         model = Rent
         fields = ('id', 'user', 'transport', 'time_start',
@@ -137,3 +137,50 @@ class AdminUserSerializer(serializers.ModelSerializer):
                   'latitude', 'longitude', 'radius', 'send_messages',
                   'balance', 'is_staff')
         extra_kwargs = {'is_active': {'read_only': True}}
+
+###########################################################################
+# AdminTransportSerializer
+
+class AdminReadTransportSerializer(serializers.ModelSerializer):
+    '''
+    Admin сериализатор, который будет использовон для вывода
+    информации о транспорте
+    '''
+    class Meta:
+        model = Transport
+        fields = ('id', 'transport_type', 'model', 'identifier', 'color',
+                  'is_active', 'description', 'latitude', 'longitude',
+                  'hour_price', 'day_price', 'owner')
+
+class AdminTransportSerializer(serializers.ModelSerializer):
+    '''
+    Admin сериализатор, который будет использовон для создания
+    нового транспорта и обновления существующего
+    '''
+    class Meta:
+        model = Transport
+        fields = ('transport_type', 'model', 'identifier', 'color',
+                  'is_active', 'description', 'latitude', 'longitude',
+                  'hour_price', 'day_price', 'owner')
+
+###########################################################################
+# AdminRentSerializer
+
+class AdminRentReadSerializerShort(serializers.ModelSerializer):
+    '''Admin Среиализатор чтения аренды'''
+    class Meta:
+        model = Rent
+        fields = ('id', 'user', 'transport', 'time_start',
+                  'time_end', 'is_active', 'price')
+
+class AdminRentReadSerializer(AdminRentReadSerializerShort):
+    '''Admin Среиализатор чтения аренды'''
+    user = AdminUserSerializer(source=None)
+    transport = AdminReadTransportSerializer(source=None)
+
+class AdminRentSerializer(serializers.ModelSerializer):
+    '''Admin Среиализатор создания аренды'''
+    class Meta:
+        model = Rent
+        fields = ('user', 'transport', 'time_start',
+                  'time_end', 'is_active', 'price')

@@ -153,6 +153,11 @@ class EndRentAPIView(APIView):
             return Response({'message': 'Эта аренда уже завершена'},
                             status=status.HTTP_403_FORBIDDEN)
 
+        self.rent_end(rent)
+
+        return Response({'message': 'Аренда завершена успешно'}, status=status.HTTP_200_OK)
+
+    def rent_end(self, rent):
         # делаю неактивной, обновляю цену аренды и дату окончания аренды
         rent.is_active = False
         print(rent.get_rental_price())
@@ -169,10 +174,9 @@ class EndRentAPIView(APIView):
         # обновляю аренду
         rent.save()
 
-        return Response({'message': 'Аренда завершена успешно'}, status=status.HTTP_200_OK)
-
 ###########################################################################
 # Payment
+
 class PaymentAPIView(APIView):
     '''Представление добавления денег на счёт пользователя'''
     permission_classes = (IsAuthenticated, IsUserOrAdmin)
@@ -189,17 +193,37 @@ class PaymentAPIView(APIView):
 
 ###########################################################################
 # AdminAccountController
-class AdminAllUsersAPIView(ListCreateAPIView):
-    '''Получение всех аккаунтов'''
-    serializer_class = UserSerializer
+
+class AdminPermissionBase:
     permission_classes = (IsAdminUser,)
 
+class AdminListStartCountBase:
+    '''
+    Базовый класс для админ-классов, где нужно выводить список от start
+    и где есть count
+    '''
     def get_queryset(self):
+        '''
+        Если метод GET, то выбираю от start до count + start,
+        иначе выбираю все записи
+        '''
         if self.request.method == 'GET':
-            queryset = User.objects.all().order_by('id')[self.start:self.start+self.count]
+            queryset = self.model.objects.all().order_by('id')[self.start:self.start+self.count]
             return queryset
         else:
-            return User.objects.all()
+            return self.model.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.start = int(request.data.get('start'))
+            self.count = int(request.data.get('count'))
+        except Exception as ex:
+            return Response({'message': 'Не указан start или count или они указаны в неверном формате'}, status=status.HTTP_400_BAD_REQUEST)
+        return super().get(request, *args, **kwargs)
+
+class AdminAllUsersAPIView(AdminListStartCountBase, AdminPermissionBase, ListCreateAPIView):
+    '''Получение всех аккаунтов'''
+    model = User
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -207,21 +231,95 @@ class AdminAllUsersAPIView(ListCreateAPIView):
         else:
             return AdminUserCreateSerializer
 
-    def get(self, request, *args, **kwargs):
-        try:
-            print(request.data.get('start'))
-            print(request.data.get('count'))
-            self.start = int(request.data.get('start'))
-            self.count = int(request.data.get('count'))
-        except Exception as ex:
-            return Response({'message': 'Не указан start или count или они указаны в неверном формате'}, status=status.HTTP_400_BAD_REQUEST)
-        return super().get(request, *args, **kwargs)
-
-class AdminUserRUDAPIView(RetrieveUpdateDestroyAPIView):
+class AdminUserRUDAPIView(AdminPermissionBase, RetrieveUpdateDestroyAPIView):
     '''
     Представление получения (GET), обновления (PUT, PATCH) и
     удаления (DELETE) пользователя админом
     '''
     serializer_class = AdminUserSerializer
-    permission_classes = (IsAdminUser,)
     queryset = User.objects.all()
+
+###########################################################################
+# AdminTransportController
+
+class AdminAllTransportAPIView(AdminListStartCountBase, AdminPermissionBase, ListCreateAPIView):
+    '''Получение всех аккаунтов'''
+    model = Transport
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return TransportReadSerializer
+        else:
+            return AdminTransportSerializer
+
+class AdminTransportRUDAPIView(AdminPermissionBase, RetrieveUpdateDestroyAPIView):
+    '''
+    Представление получения (GET), обновления (PUT, PATCH) и
+    удаления (DELETE) транспорта админом
+    '''
+    serializer_class = AdminTransportSerializer
+    queryset = Transport.objects.all()
+
+###########################################################################
+# AdminRentController
+
+class AdminRentRUDAPIView(AdminPermissionBase, RetrieveUpdateDestroyAPIView):
+    '''
+    Представление получения (GET), обновления (PUT, PATCH) и
+    удаления (DELETE) аренды админом
+    '''
+    queryset = Rent.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return AdminRentReadSerializer
+        else:
+            return AdminRentSerializer
+
+class AdminUserRentHistoryAPIView(AdminPermissionBase, UserRentHistoryAPIView):
+    '''Получение истории аренд пользователя'''
+    serializer_class = AdminRentReadSerializerShort
+    def get_queryset(self):
+        return Rent.objects.filter(user__id=self.kwargs.get('pk')) \
+            .order_by('-time_start')
+
+class AdminTransportRentHistoryAPIView(AdminPermissionBase, TransportRentHistoryAPIView):
+    '''Получение истории аренд транспорта'''
+    serializer_class = AdminRentReadSerializerShort
+
+class AdminNewRentAPIView(AdminPermissionBase, APIView):
+    '''Представление создания новой аренды'''
+
+    def post(self, request):
+        try:
+            user_id = request.data.get('user')
+            transport_id = request.data.get('transport')
+        except Exception as ex:
+            return Response({'message': 'Не указан один из атрибутов: user или transport'}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.get(id=user_id)
+        ts = Transport.objects.get(id=transport_id)
+        if user == ts.owner:
+            return Response({'message': 'Нельзя арендовать собственное ТС'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        elif user.balance < ts.hour_price:
+            return Response({'message': 'Не хватает денег на аренду ТС'}, status=status.HTTP_402_PAYMENT_REQUIRED)
+
+        rent = Rent.objects.create(user=user, transport=ts)
+        serialized_rent = AdminRentReadSerializerShort(rent)
+        return Response({'message': 'Новая аренда успешно создана', 'rent': serialized_rent.data})
+
+class AdminEndRentAPIView(AdminPermissionBase, EndRentAPIView):
+    '''Представление завершения аренды'''
+
+    def post(self, request, pk):
+        try:
+            rent = Rent.objects.get(pk=pk)
+        except Rent.DoesNotExist:
+            return Response({'message': 'Аренда не найдена'}, status=status.HTTP_404_NOT_FOUND)
+
+        if rent.is_active == False:
+            return Response({'message': 'Эта аренда уже завершена'},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        self.rent_end(rent)
+
+        return Response({'message': 'Аренда завершена успешно'}, status=status.HTTP_200_OK)

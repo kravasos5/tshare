@@ -51,9 +51,17 @@ urlpatterns = [
     # rest api AdminAccountController
     path('api/admin/account/<int:pk>/', AdminUserRUDAPIView.as_view(), name='admin-account-rud'),
     path('api/admin/account/', AdminAllUsersAPIView.as_view(), name='admin-account-listcreate'),
-
-    # path('api/', include(router.urls)),
+    # rest api AdminTransportController
+    path('api/admin/transport/<int:pk>/', AdminTransportRUDAPIView.as_view(), name='admin-transport-rud'),
+    path('api/admin/transport/', AdminAllTransportAPIView.as_view(), name='admin-transport-listcreate'),
+    # rest api AdminRentController
+    path('api/admin/rent/end/<int:pk>/', AdminEndRentAPIView.as_view(), name='admin-end-rent'),
+    path('api/admin/rent/<int:pk>/', AdminRentRUDAPIView.as_view(), name='admin-transport-rud'),
+    path('api/admin/rent/', AdminNewRentAPIView.as_view(), name='admin-new-rent'),
+    path('api/admin/userhistory/<int:pk>/', AdminUserRentHistoryAPIView.as_view(), name='admin-user-history'),
+    path('api/admin/transporthistory/<int:pk>/', AdminTransportRentHistoryAPIView.as_view(), name='admin-transport-rent-history'),
 ]
+
 urlpatterns += [
     path('captcha/', include('captcha.urls')),
 ]
