@@ -103,7 +103,7 @@ class UserTransportCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateVie
     def post(self, request, *args, **kwargs):
         form = UserTransportForm(request.POST)
         if form.is_valid():
-            # Автоматически присвоит владельца ТС
+            # Назначение владельца ТС
             transport = form.save(commit=False)
             transport.owner = request.user
             transport.save()
@@ -172,7 +172,7 @@ class Profile(LoginRequiredMixin, CsrfMixin, TemplateView):
             rent.transport.save()
             # нахожу пользователя и обновляю ему баланс
             user = rent.user
-            user.balance = user.balance - float(rent.get_rental_price())
+            user.balance = user.balance - float(rent.price)
             user.save()
             # обновляю аренду
             rent.save()
