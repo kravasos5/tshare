@@ -2,6 +2,9 @@
 ![Static Badge](https://img.shields.io/badge/Django-v4.2.6-blue)
 ![Static Badge](https://img.shields.io/badge/djangorestframework-v3.14.0-blue)
 
+Решил:
+Кравченко Владислав Александрович НФ НИТУ МИСИС
+
 # Содержание
 1. [Installation](#installation)
 1. [Запуск сервера](#runserver)
