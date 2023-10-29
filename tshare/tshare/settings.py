@@ -221,3 +221,9 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+# Если нужно обрабатывать запросы только от определённых доменов, то
+# в этой настройке нужно указать False, после чего
+# в список CORS_ORIGIN_WHITELIST добавить разрешённые домены
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = []

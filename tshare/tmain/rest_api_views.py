@@ -129,7 +129,9 @@ class NewRentAPIView(APIView):
             return Response({'message': 'Нельзя арендовать собственное ТС'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         elif user.balance < ts.hour_price:
             return Response({'message': 'Не хватает денег на аренду ТС'}, status=status.HTTP_402_PAYMENT_REQUIRED)
-
+        r = Rent.objects.filter(is_active=True, transport=ts)
+        if ts.id == r[0].transport.id:
+            return Response({'message': 'Это ТС уже арендовано'}, status=status.HTTP_403_FORBIDDEN)
 
         rent = Rent.objects.create(user=user, transport=ts)
         serialized_rent = RentReadSerializer(rent)
@@ -161,8 +163,6 @@ class EndRentAPIView(APIView):
     def rent_end(self, rent):
         # делаю неактивной, обновляю цену аренды и дату окончания аренды
         rent.is_active = False
-        print(rent.get_rental_price())
-
         rent.price = rent.get_rental_price()
         rent.time_end = timezone.now()
         # ообновляю ТС, is_rented=False, чтобы его можно было арендовать снова
@@ -289,12 +289,17 @@ class AdminTransportRentHistoryAPIView(AdminPermissionBase, TransportRentHistory
     serializer_class = AdminRentReadSerializerShort
 
 class AdminNewRentAPIView(AdminPermissionBase, APIView):
-    '''Представление создания новой аренды'''
+    '''
+    Представление создания новой аренды
+    в data необходимо отправить user id и transport id
+    например:
+    data = {"user": 3, "transport": 10}
+    '''
 
     def post(self, request):
         try:
-            user_id = request.data.get('user')
-            transport_id = request.data.get('transport')
+            user_id = int(request.data.get('user'))
+            transport_id = int(request.data.get('transport'))
         except Exception as ex:
             return Response({'message': 'Не указан один из атрибутов: user или transport'}, status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.get(id=user_id)

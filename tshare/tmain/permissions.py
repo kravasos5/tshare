@@ -28,6 +28,8 @@ class IsTransportRenterOrOwner(permissions.BasePermission):
     '''
     def has_object_permission(self, request, view, obj):
         r = Rent.objects.filter(is_active=True, transport=obj.id)
+        if len(r) == 0:
+            return obj.owner == request.user
         return request.user.id in list(r.values('user'))[0].values() or obj.owner == request.user
 
 class IsRentedTransportOwner(permissions.BasePermission):

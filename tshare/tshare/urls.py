@@ -47,4 +47,5 @@ urlpatterns += [
     path('captcha/', include('captcha.urls')),
 ]
 
+# добавляю маршруты для swagger
 urlpatterns += ysag_urlpatterns
