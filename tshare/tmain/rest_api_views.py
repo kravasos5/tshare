@@ -244,7 +244,7 @@ class AdminUserRUDAPIView(AdminPermissionBase, RetrieveUpdateDestroyAPIView):
 # AdminTransportController
 
 class AdminAllTransportAPIView(AdminListStartCountBase, AdminPermissionBase, ListCreateAPIView):
-    '''Получение всех аккаунтов'''
+    '''Получение всех ТС'''
     model = Transport
 
     def get_serializer_class(self):
