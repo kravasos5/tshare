@@ -3,6 +3,7 @@
 ![Static Badge](https://img.shields.io/badge/djangorestframework-v3.14.0-blue)
 
 **Подробнее о задании в ТЗ.pdf**
+Дизайн сайта был сделан с помощью bootstrap, автодокумментация сделана с помощью django_yasg, авторизацию по JWT с помощью django-simple-jwt
 
 # Содержание
 1. [Installation](#installation)
